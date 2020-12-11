@@ -1,6 +1,8 @@
 package observer.nonpattern;
 
 import java.awt.Color;
+
+
 import java.awt.Graphics;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -18,7 +20,6 @@ import javax.swing.JSlider;
 import javax.swing.border.TitledBorder;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
-
 import observer.CourseRecord;
 import observer.LayoutConstants;
 
@@ -78,6 +79,7 @@ public class CourseViewer extends JFrame implements ActionListener,
 		constraints.weighty = 1.0;
 		constraints.gridx = 1;
 		constraints.gridy = 0;
+		
 		// the bar chart will be drawn over this panel
 		this.getContentPane().add(new JPanel(), constraints);
 		this.setVisible(true);
@@ -129,7 +131,7 @@ public class CourseViewer extends JFrame implements ActionListener,
 		}
 	}
 
-	public void paint(Graphics g) {
+	/*public void paint(Graphics g) {
 		super.paint(g);
 		LayoutConstants.paintBarChartOutline(g, sliders.size());
 		for (int i = 0; i < sliders.size(); i++) {
@@ -144,13 +146,58 @@ public class CourseViewer extends JFrame implements ActionListener,
 							* (LayoutConstants.maxValue - record.getValue()),
 					LayoutConstants.barWidth, 2 * record.getValue());
 			g.setColor(Color.red);
-			g.drawString(record.getName(),
+			g.drawString(record.getName(), 
 					LayoutConstants.xOffset + (i + 1)
 							* LayoutConstants.barSpacing + i
 							* LayoutConstants.barWidth, LayoutConstants.yOffset
 							+ LayoutConstants.graphHeight + 20);
 		}
 	}
+	*/
+	
+	public void paint(Graphics g) {
+		super.paint(g);
+		int radius = 100;
+		int data[] = new int [sliders.size()];
+		//first compute the total number of students
+		double total = 0.0;
+		for (int j = 0; j < data.length; j++) {
+			data[j]= sliders.get(j).getValue();
+			total += data[j];
+		}
+		//if total == 0 nothing to draw
+		if (total != 0) {
+			double startAngle = 0.0;
+			for (int i = 0; i < data.length; i++) {
+				double ratio = (data[i] / total) * 360.0;
+				//draw the arc
+				g.setColor(LayoutConstants.courseColours[i%LayoutConstants.courseColours.length]);
+				g.fillArc(LayoutConstants.xOffset, LayoutConstants.yOffset + 300, 2 * radius, 2 * radius, (int) startAngle, (int) ratio);
+				startAngle += ratio;
+				
+				LayoutConstants.paintBarChartOutline(g, sliders.size());
+				for (int i1 = 0; i1 < sliders.size(); i1++) {
+					JSlider record = sliders.elementAt(i1);
+					g.setColor(LayoutConstants.courseColours[i1]);
+					g.fillRect(
+							LayoutConstants.xOffset + (i1 + 1)
+									* LayoutConstants.barSpacing + i1
+									* LayoutConstants.barWidth, LayoutConstants.yOffset
+									+ LayoutConstants.graphHeight
+									- LayoutConstants.barHeight + 2
+									* (LayoutConstants.maxValue - record.getValue()),
+							LayoutConstants.barWidth, 2 * record.getValue());
+					g.setColor(Color.red);
+					g.drawString(record.getName(), 
+							LayoutConstants.xOffset + (i1 + 1)
+									* LayoutConstants.barSpacing + i1
+									* LayoutConstants.barWidth, LayoutConstants.yOffset
+									+ LayoutConstants.graphHeight + 20);
+				
+			}
+		}
+	}
+}
 
 	/**
 	 * Manages the creation of a new course. Called when "New Course" button is pressed.

@@ -1,0 +1,22 @@
+@startuml
+class LayoutConstants [[java:observer.LayoutConstants]] {
+	+{static}int xOffset
+	+{static}int yOffset
+	+{static}int graphHeight
+	+{static}int maxValue
+	+{static}int barHeight
+	+{static}int barWidth
+	+{static}int barSpacing
+	+{static}Color[] courseColours
+	+{static}void paintBarChartOutline(Graphics g, int noOfBars)
+}
+class CourseRecord [[java:observer.CourseRecord]] {
+	-String name
+	-int numOfStudents
+	+CourseRecord(String courseName, int numOfStudents)
+	+int getNumOfStudents()
+	+String getName()
+	+void setNumOfStudents(int numOfStudents)
+	+String toString()
+}
+@enduml
